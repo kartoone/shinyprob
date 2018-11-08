@@ -3,6 +3,7 @@ var workers = [];
 function runSimulation(event) {
   event.preventDefault();
   var sims = Number(document.getElementById("numsims").value);
+  var thresh = Number(document.getElementById("threshold").value);
   var runs = Number(document.getElementById("numruns").value);
   var prob = Number(document.getElementById("simprob").value);
   killWorkers();
@@ -14,7 +15,7 @@ function runSimulation(event) {
       // worker sends back [id, successes, total, currentrand, currentprob]
       updateRow(e.data[0],e.data);
     });
-    workers[i].postMessage([i,runs,prob]);
+    workers[i].postMessage([i,runs,prob,thresh]);
   }
 }
 
