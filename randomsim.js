@@ -11,7 +11,7 @@ function runSimulation(event) {
     workers[i] = new Worker("randworker.js");
     addRow(i);
     workers[i].addEventListener('message',function(e){
-      // worker sends back [id, #succ, #total]
+      // worker sends back [id, successes, total, currentrand, currentprob]
       updateRow(e.data[0],e.data);
     });
     workers[i].postMessage([i,runs,prob]);
