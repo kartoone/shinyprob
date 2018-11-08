@@ -35,5 +35,7 @@
     <tbody>
     </tbody>
   </table>
+  <h2>Source Code</h2>
+  <a href="https://github.com/kartoone/shinyprob">https://github.com/kartoone/shinyprob</a>
 </body>
 </html>
