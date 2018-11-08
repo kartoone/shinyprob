@@ -16,5 +16,5 @@ function nextsim() {
     succ++;
   }
   total++;
-  setTimeout(function(){self.postMessage([myid,succ,total,cur,prob]);if(total<runs){nextsim()}},100);
+  setTimeout(function(){self.postMessage([myid,succ,total,cur,prob]);if(total<runs){nextsim()}},Math.round(Math.random()*100));
 }
