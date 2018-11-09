@@ -7,10 +7,6 @@ function runSimulation(event) {
   var thresh = Number(document.getElementById("threshold").value);
   var runs = Number(document.getElementById("numruns").value);
   var prob = Number(document.getElementById("simprob").value);
-  document.getElementById('countspan').innerHTML = thresh;
-  document.getElementById('threshspan').innerHTML = thresh;
-  document.getElementById('simsspan').innerHTML = runs;
-  document.getElementById('statsspan').innerHTML = runs;
   if (thresh) {
     document.getElementById('counttbl').style.display = 'none';
     document.getElementById('threshtbl').style.display = '';
