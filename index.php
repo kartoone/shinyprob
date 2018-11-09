@@ -21,13 +21,13 @@
   </p>
   <form action="#" onsubmit="runSimulation(event);return false;">
     <label for="numsims">Number of People</label>
-    <input type="number" id="numsims" name="numsims" value="25" /><br />
+    <input type="number" id="numsims" name="numsims" min= "0" value="25" /><br />
     <label for="threshold">Minimum shinies</label>
-    <input type="number" id="threshold" name="threshold" value="0" /> (Leave blank or 0 to see how many shinies people find over given number of encounters below)<br />
+    <input type="number" id="threshold" name="threshold" min= "0" value="0" /> (Leave blank or 0 to see how many shinies people find over given number of encounters below)<br />
     <label for="numsims">Max # encounters</label>
-    <input type="number" id="numruns" name="numruns" value="150" /><br />
+    <input type="number" id="numruns" name="numruns" min= "0" value="150" /><br />
     <label for="numsims">Shiny probability</label>
-    1 / <input type="number" id="simprob" name="simprob" value="50" />
+    1 / <input type="number" id="simprob" name="simprob" min= "1" value="50" />
     <input type="submit" value="Run" />
   </form>
   <h2>Simulations</h2>
