@@ -55,7 +55,7 @@
   </table>
   <table id="counttbl">
     <tr>
-      <td>Average number of shinies found per person in <span id="simsspan"></span> encounters:</td>
+      <td>Avg number of shinies found per person in <span id="simsspan"></span> encounters:</td>
       <td id="avgshinycount"></td>
     </tr>
     <tr>
