@@ -13,10 +13,11 @@
     .inline { display:inline-block; width:80px }
     .result { font-weight:bold; font-size:1.1em; }
     .w3-table-all { min-width:525px; }
-    #formpanel { display:none }
-    #resultspanel {display:none}
+    .panellink { text-decoration: none }
+    .panellink:hover {font-weight:bold; font-size:1.1em}
+    #resultspanel {margin-left:20px}
   </style>
-  <script type="text/JavaScript" src="randomsim.js"></script>
+  <script src="randomsim.js"></script>
 </head>
 <body>
   <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
@@ -32,9 +33,9 @@
     </div>
     <div class="w3-bar-block">
       <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
-      <a href="#" onclick="hideForms();" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fas fa-info-circle"></i>  Overview</a>
-      <a href="#" onclick="showAverageForm();" class="w3-bar-item w3-button w3-padding"><i class="fas fa-grin-stars "></i>  Average # Shinies</a>
-      <a href="#" onclick="showEncounterForm();" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye"></i>  Average # Encounters</a>
+      <a href="#" onclick="hideForms();" class="w3-bar-item w3-button w3-padding w3-blue" id="menuoverview"><i class="fas fa-info-circle"></i>  Overview</a>
+      <a href="#" onclick="showAverageForm();" class="w3-bar-item w3-button w3-padding" id="menuavg"><i class="fas fa-grin-stars "></i>  Average # Shinies</a>
+      <a href="#" onclick="showEncounterForm();" class="w3-bar-item w3-button w3-padding" id="menuenc"><i class="fa fa-eye"></i>  Average # Encounters</a>
     </div>
   </nav>
 
@@ -52,28 +53,24 @@
 
     <div class="w3-row-padding w3-margin-bottom">
       <div class="w3-half">
-        <div class="w3-container w3-red w3-padding-16" style="opacity:0.75">
-          <div class="w3-left"><i class="fas fa-grin-stars w3-xxxlarge"></i></div>
-          <div class="w3-right">
-            <h3></h3>
+        <a class="panellink" href="#" onclick="showAverageForm();">
+          <div id="avgpanel" class="w3-container w3-red w3-padding-16" style="opacity:0.75">
+            <div class="w3-left"><i class="fas fa-grin-stars w3-xxxlarge"></i></div>
+              <h3>&nbsp; Average # of Shinies</h3>
+              Simulate how many shinies people find over a specified
+              number of encounters.
           </div>
-          <div class="w3-clear"></div>
-          <h4>Average # of Shinies</h4>
-          Simulate how many shinies people find over a specified
-          number of encounters.
-        </div>
+        </a>
       </div>
       <div class="w3-half">
-        <div class="w3-container w3-blue w3-padding-16" style="opacity:0.75">
-          <div class="w3-left"><i class="fa fa-eye w3-xxxlarge"></i></div>
-          <div class="w3-right">
-            <h3></h3>
+        <a class="panellink" href="#" onclick="showEncounterForm();">
+          <div id="encpanel" class="w3-container w3-indigo w3-padding-16" style="opacity:0.75">
+            <div class="w3-left"><i class="fa fa-eye w3-xxxlarge"></i></div>
+            <h3>&nbsp; Average # of Encounters</h3>
+            Simulate how many encounters it takes to find a specified
+            number of shinies.
           </div>
-          <div class="w3-clear"></div>
-          <h4>Average # of Encounters</h4>
-          Simulate how many encounters it takes to find a specified
-          number of shinies.
-        </div>
+        </a>
       </div>
 
     <div class="w3-panel">
@@ -92,27 +89,28 @@
     </div>
     <div class="w3-panel" id="formpanel">
       <div class="w3-quarter">
-        <form class="w3-container" action="#" onsubmit="runSimulation(event);return false;">
+        <form class="w3-container w3-card-4" action="#" onsubmit="runSimulation(event);return false;">
+          <h3>Setup your simulation parameters</h3>
           <label for="numsims">Number of People</label>
           <input class="w3-input" type="number" id="numsims" name="numsims" min="1" value="25" />
-          <label for="threshold">Minimum shinies</label>
+          <label id="thresholdlabel" for="threshold">Number of shinies</label>
           <input class="w3-input" type="number" id="threshold" name="threshold" min="0" value="0" />
           <label for="numsims">Max # encounters</label>
-          <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="150" /><br />
+          <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="150" />
           <label for="numsims">Shiny probability</label><br />
-          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="50" />
-          <input type="submit" value="Run" />
+          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="50" /><br />
+          <input class="w3-button w3-black" type="submit" value="Run Simulation"><br /><br />
         </form>
       </div>
       <div class="w3-half" id="resultspanel">
         <h2>Real-Time Results</h2>
         <table class="w3-table-all" id="threshtbl">
           <tr>
-            <td># of people who found <span id="countspan"></span> shinies:</td>
+            <td>Number of people who found <span id="countspan"></span> shiny(s)</td>
             <td id="anacount" class="result"></td>
           </tr>
           <tr>
-            <td>Avg/Min/Max encounters before finding <span id="threshspan"></span> shinies:</td>
+            <td>Avg/Min/Max encounters before finding <span id="threshspan"></span> shiny(s)</td>
             <td id="anastats" class="result"></td>
           </tr>
         </table>
@@ -136,11 +134,15 @@
           </tbody>
         </table>
         <h2>DISCUSSION</h2>
-        <p>If you are looking for the average number of shinies caught, the analysis
-          section shows you that result over the given maximum number of encounters.
+        <p>If you are looking for the average number of shinies caught, the real-time
+          results at the top of this page shows the average, minimum, and maximum number
+          of shinies caught over the given maximum number of encounters.
+        </p>
+        <p>
           If you are looking for how many encounters it takes to find a specified number of shinies, then each
-          individual simulation stops and reports how many encounters it took to find that number of shinies. This section displays statistics related to minimum and
-          maximum and average number of encounters to find the specified number of shinies. Note that simulations which do not meet the required
+          individual simulation stops and reports how many encounters it took to find that number of shinies. The
+          real-time results section displays statistics related to the minimum,
+          maximum, and average number of encounters required to find the specified number of shinies. Note that simulations which do not meet the required
           number of shinies are not included in the results section.</p>
         <h2>Source Code</h2>
         <a href="https://github.com/kartoone/shinyprob">https://github.com/kartoone/shinyprob</a>
@@ -180,6 +182,7 @@
         mySidebar.style.display = "none";
         overlayBg.style.display = "none";
     }
+    hideForms();
   </script>
 </body>
 </html>

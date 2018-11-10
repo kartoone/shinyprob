@@ -7,13 +7,8 @@ function runSimulation(event) {
   var thresh = Number(document.getElementById("threshold").value);
   var runs = Number(document.getElementById("numruns").value);
   var prob = Number(document.getElementById("simprob").value);
-  if (thresh) {
-    document.getElementById('counttbl').style.display = 'none';
-    document.getElementById('threshtbl').style.display = '';
-  } else {
-    document.getElementById('counttbl').style.display = '';
-    document.getElementById('threshtbl').style.display = 'none';
-  }
+  document.getElementById('threshspan').innerHTML = thresh;
+  document.getElementById('countspan').innerHTML = thresh;
   killWorkers();
   resetRows();
   workerstats.threshold = thresh;
@@ -77,17 +72,23 @@ function updateAllStats(data) {
   let minshinies = false;
   let totshinies = 0;
   for (let w of workers) {
-    if (maxshinies===false || w.stats.succ>maxshinies) {
-      maxshinies = w.stats.succ;
+    if (w.stats.succ>=0) {
+      if (maxshinies===false || w.stats.succ>maxshinies) {
+        maxshinies = w.stats.succ;
+      }
+      if (minshinies===false || w.stats.succ<minshinies) {
+        minshinies = w.stats.succ;
+      }
+      totshinies += w.stats.succ;
     }
-    if (minshinies===false || w.stats.succ<minshinies) {
-      minshinies = w.stats.succ;
-    }
-    totshinies += w.stats.succ;
   }
   let avg = Math.round(totshinies*10/workers.length)/10.0;
   document.getElementById('avgshinycount').innerHTML = avg;
-  document.getElementById('shinystats').innerHTML = minshinies + " / " + maxshinies;
+  if (minshinies===false || maxshinies==false) {
+    document.getElementById('shinystats').innerHTML = 0 + " / " + 0;
+  } else {
+    document.getElementById('shinystats').innerHTML = minshinies + " / " + maxshinies;
+  }
 }
 
 // keep track of how many workers have reached threshold
@@ -109,16 +110,66 @@ function updateSuccessfulStats(data) {
   let maxruns = false;
   let minruns = false;
   for (let w of workerstats.successful) {
-    if (maxruns===false || w.total>maxruns) {
-      maxruns = w.total;
+    if (w.total>=0) {
+      if (maxruns===false || w.total>maxruns) {
+        maxruns = w.total;
+      }
+      if (minruns===false || w.total<minruns) {
+        minruns = w.total;
+      }
+      totalruns += w.total;
     }
-    if (minruns===false || w.total<minruns) {
-      minruns = w.total;
-    }
-    totalruns += w.total;
   }
   let avgruns = workerstats.successful.length>0?Math.round(totalruns/workerstats.successful.length):0;
-  document.getElementById('anastats').innerHTML = avgruns + " / " + minruns + " / " + maxruns;
+  if (minruns===false||maxruns===false) {
+    document.getElementById('anastats').innerHTML = 0 + " / " + 0 + " / " + 0;
+  } else {
+    document.getElementById('anastats').innerHTML = avgruns + " / " + minruns + " / " + maxruns;
+  }
+}
+
+function hideForms() {
+  if (event)
+    event.preventDefault();
+  document.getElementById('formpanel').style.display = 'none';
+  document.getElementById('avgpanel').style.opacity = 0.6;
+  document.getElementById('encpanel').style.opacity = 0.6;
+  document.getElementById('menuoverview').classList.remove('w3-blue');
+  document.getElementById('menuoverview').classList.add('w3-blue');
+  document.getElementById('menuavg').classList.remove('w3-blue');
+  document.getElementById('menuenc').classList.remove('w3-blue');
+}
+
+function showAverageForm() {
+  event.preventDefault();
+  document.getElementById('counttbl').style.display = '';
+  document.getElementById('threshtbl').style.display = 'none';
+  document.getElementById('formpanel').style.display = '';
+  document.getElementById('threshold').value = '0';
+  document.getElementById('threshold').style.display = 'none';
+  document.getElementById('thresholdlabel').style.display = 'none';
+  document.getElementById('avgpanel').style.opacity = 1;
+  document.getElementById('encpanel').style.opacity = 0.6;
+  document.getElementById('menuavg').classList.remove('w3-blue');
+  document.getElementById('menuavg').classList.add('w3-blue');
+  document.getElementById('menuoverview').classList.remove('w3-blue');
+  document.getElementById('menuenc').classList.remove('w3-blue');
+}
+
+function showEncounterForm() {
+  event.preventDefault();
+  document.getElementById('counttbl').style.display = 'none';
+  document.getElementById('threshtbl').style.display = '';
+  document.getElementById('formpanel').style.display = '';
+  document.getElementById('threshold').style.display = '';
+  document.getElementById('thresholdlabel').style.display = '';
+  document.getElementById('threshold').value = '1';
+  document.getElementById('avgpanel').style.opacity = 0.6;
+  document.getElementById('encpanel').style.opacity = 1;
+  document.getElementById('menuenc').classList.remove('w3-blue');
+  document.getElementById('menuenc').classList.add('w3-blue');
+  document.getElementById('menuoverview').classList.remove('w3-blue');
+  document.getElementById('menuavg').classList.remove('w3-blue');
 }
 
 function resetRows() {
