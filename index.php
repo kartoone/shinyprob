@@ -106,22 +106,22 @@
         <h2>Real-Time Results</h2>
         <table class="w3-table-all" id="threshtbl">
           <tr>
-            <td>Number of people who found <span id="countspan"></span> shiny(s)</td>
             <td id="anacount" class="result"></td>
+            <td>Number of people who found <span id="countspan"></span> shiny(s)</td>
           </tr>
           <tr>
-            <td>Avg/Min/Max encounters before finding <span id="threshspan"></span> shiny(s)</td>
             <td id="anastats" class="result"></td>
+            <td>Avg/Min/Max encounters before finding <span id="threshspan"></span> shiny(s)</td>
           </tr>
         </table>
         <table class="w3-table-all" id="counttbl">
           <tr>
-            <td>Average number of shinies found per person</td>
             <td id="avgshinycount" class="result"></td>
+            <td>Average number of shinies found per person</td>
           </tr>
           <tr>
-            <td>Min/Max number of shinies found by any one person</td>
             <td id="shinystats" class="result"></td>
+            <td>Min/Max number of shinies found by any one person</td>
           </tr>
         </table>
 
