@@ -16,6 +16,7 @@
     .panellink { text-decoration: none }
     .panellink:hover {font-weight:bold; font-size:1.1em}
     #resultspanel {margin-left:20px}
+    #simtbl td.winningprob { min-width:250px }
   </style>
   <script src="randomsim.js"></script>
 </head>
@@ -44,7 +45,7 @@
   <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
   <!-- !PAGE CONTENT! -->
-  <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+  <div class="w3-main" style="margin-left:300px;margin-top:43px;overflow:scroll">
 
     <!-- Header -->
     <header class="w3-container" style="padding-top:22px">
@@ -128,7 +129,7 @@
         <h2>Simulations</h2>
         <table class="w3-table-all" id="simtbl">
           <thead>
-            <tr><th>Person</th><th>Encounters</th><th>Shinies</th><th>Prob</th><th>Current</th><th>Winning probs</th></tr>
+            <tr><th>Person</th><th>Encounters</th><th>Shinies</th><th>Prob</th><th>Current</th><th>Winning probs (encounter #)</th></tr>
           </thead>
           <tbody>
           </tbody>

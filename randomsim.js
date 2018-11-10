@@ -3,18 +3,19 @@ var workerstats = {};
 
 function runSimulation(event) {
   event.preventDefault();
+  killWorkers();
+  resetRows();
+  resetStats();
   var sims = Number(document.getElementById("numsims").value);
   var thresh = Number(document.getElementById("threshold").value);
   var runs = Number(document.getElementById("numruns").value);
   var prob = Number(document.getElementById("simprob").value);
   document.getElementById('threshspan').innerHTML = thresh;
   document.getElementById('countspan').innerHTML = thresh;
-  killWorkers();
-  resetRows();
   workerstats.threshold = thresh;
-  workerstats.successful = []; // init an empty array of workers who have reached the threshold
   for (var i = 0; i < sims; i++) {
     workers[i] = new Worker("randworker.js");
+    workers[i].id = i;
     workers[i].stats = {}; // setup a new place to keep track of this workers stats
     addRow(i);
     workers[i].addEventListener('message',function(e){
@@ -24,6 +25,16 @@ function runSimulation(event) {
     });
     workers[i].postMessage([i,runs,prob,thresh]);
   }
+}
+
+function resetStats() {
+  workerstats.maxshinies = false;
+  workerstats.minshinies = false;
+  workerstats.totshinies = 0;
+  workerstats.maxruns = false;
+  workerstats.minruns = false;
+  workerstats.totruns = 0;
+  workerstats.successful = []; // init an empty array of workers who have reached the threshold
 }
 
 function addRow(i) {
@@ -48,11 +59,12 @@ function updateRow(data) {
   totalcell.innerHTML = data[2];
   var succcell = document.getElementById('succ'+i);
   succcell.innerHTML = data[1];
-  if (Number(data[3])<=Number(data[4])) {
+  if (data[3]<data[4]) {
     // we have a winner ... let's freeze this winner by inserting a cell
     var row = document.getElementById('row'+i);
     var cell = row.insertCell(-1);
-    cell.innerHTML = data[3];
+    cell.innerHTML = data[3] + ' ('+data[2]+')';
+    cell.classList.add('winningprob');
   }
   var curcell = document.getElementById('cur'+i);
   curcell.innerHTML = data[3];
@@ -62,69 +74,104 @@ function updateRow(data) {
 
 function updateStats(data) {
   updateAllStats(data);
-  updateSuccessfulStats(data);
+  updateSuccessful(data);
 }
 
 function updateAllStats(data) {
-  workers[data[0]].stats.total = data[2];
-  workers[data[0]].stats.succ = data[1];
-  let maxshinies = false;
-  let minshinies = false;
-  let totshinies = 0;
+  let worker = workers[data[0]];
+  worker.stats.total = data[2];
+  worker.stats.succ = data[1];
+  // no easy way to optimixe this one unless you kept track of the worker(s)
+  // who had the min number of shinies and then when they got a new shiny
+  // you updated the minimum number of shinies.
+  // Far easier to simply reanalyze all workers
+  workerstats.totshinies = 0;
+  workerstats.minshinies = false;
+  workerstats.maxshinies = false;
   for (let w of workers) {
-    if (w.stats.succ>=0) {
-      if (maxshinies===false || w.stats.succ>maxshinies) {
-        maxshinies = w.stats.succ;
+    if (w.stats.total>0) {
+      if (workerstats.maxshinies===false || w.stats.succ>workerstats.maxshinies) {
+        workerstats.maxshinies = w.stats.succ;
       }
-      if (minshinies===false || w.stats.succ<minshinies) {
-        minshinies = w.stats.succ;
+      if (workerstats.minshinies===false || w.stats.succ<workerstats.minshinies) {
+        workerstats.minshinies = w.stats.succ;
       }
-      totshinies += w.stats.succ;
+      workerstats.totshinies += w.stats.succ;
     }
   }
-  let avg = Math.round(totshinies*10/workers.length)/10.0;
+
+  let avg = Math.round(workerstats.totshinies*10/workers.length)/10.0;
   document.getElementById('avgshinycount').innerHTML = avg;
-  if (minshinies===false || maxshinies==false) {
+  if (workerstats.minshinies===false || workerstats.maxshinies==false) {
     document.getElementById('shinystats').innerHTML = 0 + " / " + 0;
   } else {
-    document.getElementById('shinystats').innerHTML = minshinies + " / " + maxshinies;
+    document.getElementById('shinystats').innerHTML = workerstats.minshinies + " / " + workerstats.maxshinies;
   }
 }
 
 // keep track of how many workers have reached threshold
-function updateSuccessfulStats(data) {
+function updateSuccessful(data) {
   let hit = false;
   for (let w of workerstats.successful) {
     if (w.id == data[0]) {
-      w.total = data[2];
-      w.succ = data[1];
       hit = true;
       break;
     }
   }
   if (!hit && data[1] >= workerstats.threshold) {
-    workerstats.successful.push({id:data[0],total:data[2],succ:data[1]});
-  }
-  document.getElementById('anacount').innerHTML = workerstats.successful.length;
-  let totalruns = 0;
-  let maxruns = false;
-  let minruns = false;
-  for (let w of workerstats.successful) {
-    if (w.total>=0) {
-      if (maxruns===false || w.total>maxruns) {
-        maxruns = w.total;
-      }
-      if (minruns===false || w.total<minruns) {
-        minruns = w.total;
-      }
-      totalruns += w.total;
+    let w = workers[data[0]];
+    workerstats.totruns += w.stats.total; // only count the number of encounters for those who have reached the threshold
+    workerstats.successful.push(w);
+    if (workerstats.maxruns===false || w.stats.total>workerstats.maxruns) {
+      workerstats.maxruns = w.stats.total;
+    }
+    if (workerstats.minruns===false || w.stats.total<workerstats.minruns) {
+      workerstats.minruns = w.stats.total;
     }
   }
-  let avgruns = workerstats.successful.length>0?Math.round(totalruns/workerstats.successful.length):0;
-  if (minruns===false||maxruns===false) {
+  document.getElementById('anacount').innerHTML = workerstats.successful.length;
+  let avgruns = workerstats.successful.length>0?Math.round(workerstats.totruns/workerstats.successful.length):0;
+  if (workerstats.minruns===false||workerstats.maxruns===false) {
     document.getElementById('anastats').innerHTML = 0 + " / " + 0 + " / " + 0;
   } else {
-    document.getElementById('anastats').innerHTML = avgruns + " / " + minruns + " / " + maxruns;
+    document.getElementById('anastats').innerHTML = avgruns + " / " + workerstats.minruns + " / " + workerstats.maxruns;
+  }
+  if (workerstats.threshold>0) {
+    highlightEncounters();
+  } else {
+    highlightShinies();
+  }
+}
+
+function highlightShinies() {
+  if (workerstats.maxshinies===false || workerstats.minshinies===false) {
+    return; // if we don't have any winners/losers yet, don't highlight anything
+  }
+  for (let w of workers) {
+    var workerrow = document.getElementById('row'+w.id);
+    workerrow.classList.remove('w3-red'); // remove any current highlights
+    workerrow.classList.remove('w3-green');
+    if (w.stats.succ === workerstats.minshinies) {
+      workerrow.classList.add('w3-red'); // remove any current highlights
+    } else if (w.stats.succ === workerstats.maxshinies) {
+      workerrow.classList.add('w3-green'); // remove any current highlights
+    }
+  }
+}
+
+function highlightEncounters() {
+  if (workerstats.maxruns===false || workerstats.minruns===false) {
+    return; // if we don't have any winners/losers yet, don't highlight anything
+  }
+  for (let w of workerstats.successful) {
+    var workerrow = document.getElementById('row'+w.id);
+    workerrow.classList.remove('w3-red'); // remove any current highlights
+    workerrow.classList.remove('w3-green');
+    if (w.stats.total === workerstats.maxruns) {
+      workerrow.classList.add('w3-red'); // remove any current highlights
+    } else if (w.stats.total === workerstats.minruns) {
+      workerrow.classList.add('w3-green'); // remove any current highlights
+    }
   }
 }
 

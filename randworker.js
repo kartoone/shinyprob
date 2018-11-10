@@ -4,12 +4,17 @@ var runs = false;
 var prob = false;
 var succ = 0;
 var total = 0;
+var delay = 100;
 self.addEventListener('message',function(e) {
-  myid = e.data[0];
-  runs = e.data[1];
-  prob = 1.0/e.data[2];
-  thresh = e.data[3];
-  nextsim();
+  if (e.data[0]<0) { // flag to update delay
+    delay = e.data[1];
+  } else {
+    myid = e.data[0];
+    runs = e.data[1];
+    prob = 1.0/e.data[2];
+    thresh = e.data[3];
+    nextsim();
+  }
 });
 
 function nextsim() {
@@ -23,5 +28,5 @@ function nextsim() {
     if((!thresh && total<runs) || (thresh && succ<thresh && total<runs)) {
       nextsim();
     }
-  },Math.round(Math.random()*100));
+  },Math.round(Math.random()*delay));
 }
