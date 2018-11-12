@@ -2,6 +2,7 @@ var workers = [];
 var workerstats = {};
 
 //this simulates main methord.
+//change
 function runSimulation(event) {
   event.preventDefault();
   var sims = Number(document.getElementById("numsims").value);
