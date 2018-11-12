@@ -1,6 +1,7 @@
 var workers = [];
 var workerstats = {};
 
+//this simulates main methord.
 function runSimulation(event) {
   event.preventDefault();
   var sims = Number(document.getElementById("numsims").value);
