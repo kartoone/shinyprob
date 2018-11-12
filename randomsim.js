@@ -1,7 +1,7 @@
 var workers = [];
 var workerstats = {};
 var workersstopped = 0; // flag to let us know when all workers have finished
-const MAXREALTIMESIMS = 450; // this is about the limit for realtime display on my system
+const MAXREALTIMESIMS = 450; // this is the limit for realtime display on my system
 
 function runSimulation() {
   event.preventDefault();
@@ -65,6 +65,7 @@ function stopSimulation() {
 }
 
 function resetStats() {
+  workersstopped = 0;
   workerstats.maxshinies = false;
   workerstats.minshinies = false;
   workerstats.totshinies = 0;
