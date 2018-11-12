@@ -90,21 +90,25 @@
     </div>
     <div class="w3-panel" id="formpanel">
       <div class="w3-quarter">
-        <form class="w3-container w3-card-4" action="#" onsubmit="runSimulation(event);return false;">
+        <form class="w3-container w3-card-4" action="#" onsubmit="runSimulation();return false;">
           <h3>Setup your simulation parameters</h3>
           <label for="numsims">Number of People</label>
-          <input class="w3-input" type="number" id="numsims" name="numsims" min="1" value="25" />
+          <input class="w3-input" type="number" id="numsims" name="numsims" min="1" max="2500" value="25" />
           <label id="thresholdlabel" for="threshold">Number of shinies</label>
           <input class="w3-input" type="number" id="threshold" name="threshold" min="0" value="0" />
           <label for="numsims">Max # encounters</label>
           <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="150" />
           <label for="numsims">Shiny probability</label><br />
           1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="50" /><br />
-          <input class="w3-button w3-black" type="submit" value="Run Simulation"><br /><br />
+          <div style="width:100%;text-align:left;margin:10px 0 20px 0">
+          <input id="runbtn" class="w3-button w3-black w3-hover-green" type="submit" value="Run Simulation">
+          <input id="stopbtn" class="w3-button w3-black w3-hover-red" type="button" value="Stop Simulation" disabled="disabled" onclick="stopSimulation();return false;">
+          <img src="ajax-loader.gif" style="display:none" id="busyicon" />
+          </div>
         </form>
       </div>
       <div class="w3-half" id="resultspanel">
-        <h2>Real-Time Results</h2>
+        <h2>Cumulative Results</h2>
         <table class="w3-table-all" id="threshtbl">
           <tr>
             <td id="anacount" class="result"></td>
@@ -126,7 +130,7 @@
           </tr>
         </table>
 
-        <h2>Simulations</h2>
+        <h2 style="display:inline">Simulations</h2> <input type="checkbox" id="realtimecheckbox" checked="checked" value="1" onchange="enableRealtime();" /> Display real-time updates (when enabled only 450 sims can be run simultaneously)
         <table class="w3-table-all" id="simtbl">
           <thead>
             <tr><th>Person</th><th>Encounters</th><th>Shinies</th><th>Prob</th><th>Current</th><th>Winning probs (encounter #)</th></tr>
@@ -135,14 +139,14 @@
           </tbody>
         </table>
         <h2>DISCUSSION</h2>
-        <p>If you are looking for the average number of shinies caught, the real-time
-          results at the top of this page shows the average, minimum, and maximum number
+        <p>If you are looking for the average number of shinies caught, the Cumulative
+          results section at the top of this page shows the average, minimum, and maximum number
           of shinies caught over the given maximum number of encounters.
         </p>
         <p>
           If you are looking for how many encounters it takes to find a specified number of shinies, then each
           individual simulation stops and reports how many encounters it took to find that number of shinies. The
-          real-time results section displays statistics related to the minimum,
+          Cumulative results section displays statistics related to the minimum,
           maximum, and average number of encounters required to find the specified number of shinies. Note that simulations which do not meet the required
           number of shinies are not included in the results section.</p>
         <h2>Source Code</h2>

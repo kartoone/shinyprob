@@ -1,8 +1,13 @@
 var workers = [];
 var workerstats = {};
+var workersstopped = 0; // flag to let us know when all workers have finished
+const MAXREALTIMESIMS = 450; // this is about the limit for realtime display on my system
 
-function runSimulation(event) {
+function runSimulation() {
   event.preventDefault();
+  document.getElementById('busyicon').style.display = '';
+  document.getElementById('runbtn').disabled = true;
+  document.getElementById('stopbtn').disabled = false;
   killWorkers();
   resetRows();
   resetStats();
@@ -12,19 +17,51 @@ function runSimulation(event) {
   var prob = Number(document.getElementById("simprob").value);
   document.getElementById('threshspan').innerHTML = thresh;
   document.getElementById('countspan').innerHTML = thresh;
+  if (sims>MAXREALTIMESIMS) {
+    document.getElementById('realtimecheckbox').checked = false;
+    document.getElementById('realtimecheckbox').disabled = true;
+  }
   workerstats.threshold = thresh;
+  let checked = document.getElementById('realtimecheckbox').checked;
+  let delay = checked?sims:0; // increase artificial delay as # of sims increases to give main DOM thread a chance to keep up with all the messages
   for (var i = 0; i < sims; i++) {
     workers[i] = new Worker("randworker.js");
     workers[i].id = i;
     workers[i].stats = {}; // setup a new place to keep track of this workers stats
     addRow(i);
     workers[i].addEventListener('message',function(e){
-      // worker sends back [id, successes, total, currentrand, currentprob]
-      updateRow(e.data);
-      updateStats(e.data);
+      if (e.data[0]==-1) {
+        // worker just finished, check to see if this was the last workers
+        if (++workersstopped == workers.length) {
+          stopSimulation();
+          workersstopped = 0;
+        }
+      } else {
+        // worker sends back [id, successes, total, currentrand, currentprob]
+        updateRow(e.data);
+        updateStats(e.data);
+      }
     });
-    workers[i].postMessage([i,runs,prob,thresh]);
+    workers[i].postMessage([i,runs,prob,thresh,delay,checked]);
   }
+}
+
+// if user clicks the enableRealtime button, then force the #sims to max
+function enableRealtime() {
+  if (document.getElementById('realtimecheckbox').checked) {
+    if (Number(document.getElementById('numsims').value)>MAXREALTIMESIMS) {
+      document.getElementById('numsims').value=MAXREALTIMESIMS;
+    }
+  }
+}
+
+function stopSimulation() {
+  event.preventDefault();
+  document.getElementById('runbtn').disabled = false;
+  document.getElementById('stopbtn').disabled = true;
+  document.getElementById('realtimecheckbox').disabled = false;
+  document.getElementById('busyicon').style.display = 'none';
+  killWorkers();
 }
 
 function resetStats() {
