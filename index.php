@@ -148,7 +148,9 @@
           individual simulation stops and reports how many encounters it took to find that number of shinies. The
           Cumulative results section displays statistics related to the minimum,
           maximum, and average number of encounters required to find the specified number of shinies. Note that simulations which do not meet the required
-          number of shinies are not included in the results section.</p>
+          number of shinies are not included in the results section. Note: if you want to make sure all simulations
+          are counted in this mode, then enter a high max encounter limit.</p>
+        <p><b>Finding perfects</b> - change the "odds" from 1 in 50 to 1 in 4096 to get the odds of finding a non-weather boosted perfect.</p>
         <h2>Source Code</h2>
         <a href="https://github.com/kartoone/shinyprob">https://github.com/kartoone/shinyprob</a>
       </div>

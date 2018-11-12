@@ -23,7 +23,7 @@ self.addEventListener('message',function(e) {
 });
 
 function nextsim(cur) {
-  if (cur<=prob) {
+  if (cur<prob) {
     succ++;
     successes.push([myid, succ, total, cur, prob]);
   }
