@@ -5,18 +5,19 @@ const MAXREALTIMESIMS = 450; // this is the limit for realtime display on my sys
 
 function runSimulation() {
   event.preventDefault();
+  var sims = Number(document.getElementById("numsims").value);     // number of people being simulated
+  var thresh = Number(document.getElementById("threshold").value); // required number of shinies for mode 2 (blue mode, i.e, # of encounters mode)
+  var runs = Number(document.getElementById("numruns").value);     // maximum number of encounters before terminating individual person sim
+  var prob = Number(document.getElementById("simprob").value);     // probability of encountering a shiny
+  document.getElementById('threshspan').innerHTML = thresh;
+  document.getElementById('countspan').innerHTML = thresh;
   document.getElementById('busyicon').style.display = '';
   document.getElementById('runbtn').disabled = true;
   document.getElementById('stopbtn').disabled = false;
   killWorkers();
   resetRows();
   resetStats();
-  var sims = Number(document.getElementById("numsims").value);
-  var thresh = Number(document.getElementById("threshold").value);
-  var runs = Number(document.getElementById("numruns").value);
-  var prob = Number(document.getElementById("simprob").value);
-  document.getElementById('threshspan').innerHTML = thresh;
-  document.getElementById('countspan').innerHTML = thresh;
+  setupBuckets(thresh,runs,prob);
   if (sims>MAXREALTIMESIMS) {
     document.getElementById('realtimecheckbox').checked = false;
     document.getElementById('realtimecheckbox').disabled = true;
@@ -73,6 +74,93 @@ function resetStats() {
   workerstats.minruns = false;
   workerstats.totruns = 0;
   workerstats.successful = []; // init an empty array of workers who have reached the threshold
+  workerstats.buckets = {count:[],thresh:[]};
+}
+
+//buckets is an interesting data structure
+//multi-level nested object ... two buckets, count and thresh, which each are objects
+//with keys that are the starting value for the current range and values which is
+//an array of the workers who fall in that range.
+//the bucket ranges are determined ahead of time based on the sim parameters,
+// for the count bucket, its based on expected value of the number of Shinies
+// for the thresh bucket, its based on threshold and expected value
+function setupBuckets(thresh,runs,prob) {
+  setupCountBucket(runs,prob);
+  setupThreshBucket(thresh,runs,prob);
+}
+
+function setupCountBucket(runs,prob) {
+  // expected value is simply number of runs divided by probability (odds)
+  let e = runs/prob;
+
+  // now that we have expected value, let's try to divide into 10 buckets
+  let r = Math.ceil(e/5.0); // should be one most of the time
+
+  // walk over the range and initialize all the keys in the count bucket
+  min = 0;
+  for (let i = 0; i<10; i++) {
+    workerstats.buckets.count.push({min:min,max:min+r-1,workers:[]}); // initialize the workers to
+    min = min + r;
+  }
+
+  // insert a cell in the bucketcounttbl for each of the ranges as headers
+  let tbl = document.getElementById('bucketcounttbl');
+  tbl.innerHTML = "";
+  let headrow = tbl.insertRow(-1);
+  let countrow = tbl.insertRow(-1);
+  countrow.setAttribute("id","bucketcountrow");
+  for (let b of workerstats.buckets.count) {
+    var cell = headrow.insertCell(-1);
+    cell.setAttribute("style","font-weight:bold");
+    if (b.min==b.max) {
+      cell.innerHTML = `[${b.min}]`;
+    } else {
+      cell.innerHTML = `[${b.min}-${b.max}]`;
+    }
+    var datacell = countrow.insertCell(-1);
+    datacell.innerHTML = 0;
+  }
+}
+
+function setupThreshBucket(thresh,runs,prob) {
+
+}
+
+function updateBuckets(data) {
+  let worker = workers[data[0]];
+  updateCountBucket(worker);
+  updateThreshBucket(worker);
+}
+
+function updateCountBucket(worker) {
+  // find the right bucket to put the woker into
+  let hit = false;
+  for (let b of workerstats.buckets.count) {
+    b.workers = b.workers.filter(w => worker.id!=w.id);
+    if (worker.stats.succ>=b.min && worker.stats.succ<=b.max) {
+      hit = true; // we found the bucket for this worker
+      b.workers.push(worker);
+      break;
+    }
+  }
+
+  // if the worker didn't fit into any of the predefined buckets, put them into the last bucket
+  if (!hit) {
+    workerstats.buckets.count[workerstats.buckets.count.length-1].workers.push(worker);
+  }
+
+  // finally update the counts in all the buckets
+  var countrow = document.getElementById("bucketcountrow");
+  var cells = countrow.children;
+  var childi = 0;
+  for (let b of workerstats.buckets.count) {
+    cells[childi++].innerHTML = b.workers.length;
+  }
+
+}
+
+function updateThreshBucket(worker) {
+
 }
 
 function addRow(i) {
@@ -113,6 +201,7 @@ function updateRow(data) {
 function updateStats(data) {
   updateAllStats(data);
   updateSuccessful(data);
+  updateBuckets(data);
 }
 
 function updateAllStats(data) {
