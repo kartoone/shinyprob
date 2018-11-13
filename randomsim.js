@@ -94,11 +94,11 @@ function setupCountBucket(runs,prob) {
   let e = runs/prob;
 
   // now that we have expected value, let's try to divide into 10 buckets
-  let r = Math.ceil(e/5.0); // should be one most of the time
+  let r = Math.ceil(e/3.5); // should be one most of the time
 
   // walk over the range and initialize all the keys in the count bucket
   min = 0;
-  for (let i = 0; i<10; i++) {
+  for (let i = 0; i<7; i++) {
     workerstats.buckets.count.push({min:min,max:min+r-1,workers:[]}); // initialize the workers to
     min = min + r;
   }
@@ -109,13 +109,16 @@ function setupCountBucket(runs,prob) {
   let headrow = tbl.insertRow(-1);
   let countrow = tbl.insertRow(-1);
   countrow.setAttribute("id","bucketcountrow");
+  let islast = 0;
   for (let b of workerstats.buckets.count) {
     var cell = headrow.insertCell(-1);
     cell.setAttribute("style","font-weight:bold");
-    if (b.min==b.max) {
-      cell.innerHTML = `[${b.min}]`;
+    if (++islast == workerstats.buckets.count.length) {
+      cell.innerHTML = `[${b.min}+]<br />shinies`;
+    } else if (b.min==b.max) {
+      cell.innerHTML = `[${b.min}]<br />shinies`;
     } else {
-      cell.innerHTML = `[${b.min}-${b.max}]`;
+      cell.innerHTML = `[${b.min}-${b.max}]<br />shinies`;
     }
     var datacell = countrow.insertCell(-1);
     datacell.innerHTML = 0;
