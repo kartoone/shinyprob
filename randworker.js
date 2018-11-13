@@ -47,7 +47,7 @@ function nextsimhelper(cur) {
         }
         // check the last success to make sure it didn't happen on the last encounter, if not then send one final total message
         let last = successes.pop();
-        if (last[2]<runs && (thresh<1 || succ<thresh)) { // only do this check if we are doing average shinies or we failed to find required number of shinies
+        if (last[2]<runs-1 && (thresh<1 || succ<thresh)) { // only do this check if we are doing average shinies or we failed to find required number of shinies
           self.postMessage([myid,succ,total,cur,prob]); // send one last final update if last success wasn't last run
         }
       } else {
