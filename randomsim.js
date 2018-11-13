@@ -227,6 +227,8 @@ function hideForms() {
 
 function showAverageForm() {
   event.preventDefault();
+  document.getElementById('bucketcounttbl').style.display = '';
+  document.getElementById('bucketthreshtbl').style.display = 'none';
   document.getElementById('counttbl').style.display = '';
   document.getElementById('threshtbl').style.display = 'none';
   document.getElementById('formpanel').style.display = '';
@@ -243,6 +245,8 @@ function showAverageForm() {
 
 function showEncounterForm() {
   event.preventDefault();
+  document.getElementById('bucketcounttbl').style.display = 'none';
+  document.getElementById('bucketthreshtbl').style.display = '';
   document.getElementById('counttbl').style.display = 'none';
   document.getElementById('threshtbl').style.display = '';
   document.getElementById('formpanel').style.display = '';
