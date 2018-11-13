@@ -99,7 +99,7 @@
           <label for="numsims">Max # encounters</label>
           <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="150" />
           <label for="numsims">Shiny probability</label><br />
-          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="50" /><br />
+          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="50" step="0.1" /><br />
           <div style="width:100%;text-align:left;margin:10px 0 20px 0">
           <input id="runbtn" class="w3-button w3-black w3-hover-green" type="submit" value="Run Simulation">
           <input id="stopbtn" class="w3-button w3-black w3-hover-red" type="button" value="Stop Simulation" disabled="disabled" onclick="stopSimulation();return false;">
