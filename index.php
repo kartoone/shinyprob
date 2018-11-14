@@ -99,7 +99,21 @@
           <label for="numsims">Max # encounters</label>
           <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="150" />
           <label for="numsims">Shiny probability</label><br />
-          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="22.5" step="0.1" /><br />
+          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="22.5" step="0.1" onchange="updateSelect(this.value)" />
+          <select name="guessedprobs" id="guessedprobs" onchange="document.getElementById('simprob').value=this.value;">
+            <option value="100" id="customoption">Custom</custom>
+            <option value="22.5" selected="selected">Shiny: community day boosted probability</option>
+            <option value="50">Shiny: special event (e.g., cubone, ponyta event)</option>
+            <option value="450">Shiny: normal non-boosted probability</option>
+            <option value="216">Perfect: egg hatch or raid</option>
+            <option value="1728">Perfect: weather boosted spawn</option>
+            <option value="64">Perfect: lucky trade</option>
+            <option value="1331">Perfect: best friend trade</option>
+            <option value="2197">Perfect: ultra friend trade</option>
+            <option value="2744">Perfect: great friend trade</option>
+            <option value="3375">Perfect: good friend trade</option>
+          </select>
+          <br />
           <div style="width:100%;text-align:left;margin:10px 0 20px 0">
           <input id="runbtn" class="w3-button w3-black w3-hover-green" type="submit" value="Run Simulation">
           <input id="stopbtn" class="w3-button w3-black w3-hover-red" type="button" value="Stop Simulation" disabled="disabled" onclick="stopSimulation();return false;">
@@ -107,7 +121,7 @@
           </div>
         </form>
       </div>
-      <div class="w3-half" id="resultspanel">
+      <div class="w3-half" id="resultspanel" style="background:white;opacity:1">
         <h2 style="margin-bottom:0">Cumulative Results</h2>
         <table class="w3-table-all" id="threshtbl">
           <tr>
@@ -139,7 +153,7 @@
         </table>
 
         <h2 style="margin-bottom:0">Simulations</h2>
-        <form style="margin:0;padding:0">
+        <form style="margin:0;padding:0;">
           <input type="checkbox" id="realtimecheckbox" checked="checked" value="1" onchange="enableRealtime();" /> Display real-time updates (when enabled only 450 sims can be run simultaneously)
         </form>
         <table class="w3-table-all" id="simtbl">

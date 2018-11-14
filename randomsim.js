@@ -447,3 +447,19 @@ function killWorkers() {
   workers = [];
   workerstats = {};
 }
+
+function updateSelect(val) {
+  // loop through all the presets and if the new val is equal to one of the presets, select it
+  let sel = document.getElementById('guessedprobs');
+  let hit = false;
+  for (let opt of sel.options) {
+    if (opt.value == val) {
+      sel.value=val;
+      hit = true;
+      break;
+    }
+  }
+  if (!hit) {
+    sel.value = 100; // custom value
+  }
+}
