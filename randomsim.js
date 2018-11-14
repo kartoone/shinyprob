@@ -168,7 +168,7 @@ function setupThreshBucket(thresh,runs,prob) {
    cell = insuffrow.insertCell(-1);
    cell.setAttribute("id","insuffcell");
    cell.setAttribute("colspan",threshrow.cells.length);
-   cell.innerHTML = `Note: x person(s) did not catch ${thresh} shinies so their results are not counted above.`;
+   cell.innerHTML = `Note: x person(s) did not catch ${thresh} shiny(s) so their results are not counted above.`;
 }
 
 function updateBuckets(data) {
@@ -240,7 +240,7 @@ function updateThreshBucket(worker) {
       insuff++;
     }
   }
-  insuffcell.innerHTML = `Note: ${insuff} person(s) did not catch ${workerstats.threshold} shinies so their results are not counted above.`;
+  insuffcell.innerHTML = `Note: ${insuff} person(s) did not catch ${workerstats.threshold} shiny(s) so their results are not counted above.`;
 }
 
 function addRow(i,prob) {
