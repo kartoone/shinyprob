@@ -83,7 +83,7 @@ function resetStats() {
 //an array of the workers who fall in that range.
 //the bucket ranges are determined ahead of time based on the sim parameters,
 // for the count bucket, its based on expected value of the number of Shinies
-// for the thresh bucket, its based on threshold and expected value
+// for the thresh bucket, its based on threshold, runs, and odds
 function setupBuckets(thresh,runs,prob) {
   setupCountBucket(runs,prob);
   setupThreshBucket(thresh,runs,prob);
@@ -126,7 +126,47 @@ function setupCountBucket(runs,prob) {
 }
 
 function setupThreshBucket(thresh,runs,prob) {
+  // expected value is simply thresh * odds ... if this is more than number of runs
+  let e = thresh*prob;
+  if (runs<e) {
+   e = runs/2;
+  }
+  let r = Math.ceil(e/3.5);
+   min = 1;
+   for (let i = 0; i<7 && i*r<runs; i++) {
+     workerstats.buckets.thresh.push({min:min,max:min+r-1,workers:[]}); // initialize the workers to
+     min = min + r;
+   }
 
+   // insert a cell in the bucketcounttbl for each of the ranges as headers
+   let tbl = document.getElementById('bucketthreshtbl');
+   tbl.innerHTML = "";
+   let headrow = tbl.insertRow(-1);
+   let threshrow = tbl.insertRow(-1);
+   threshrow.setAttribute("id","bucketthreshrow");
+   var cell;
+   var datacell;
+   let islast = 0;
+   for (let b of workerstats.buckets.thresh) {
+     cell = headrow.insertCell(-1);
+     cell.setAttribute("style","font-weight:bold");
+     if (++islast == workerstats.buckets.thresh.length) {
+       cell.innerHTML = `[${b.min}+]<br />enctrs`;
+     } else if (b.min==b.max) {
+       cell.innerHTML = `[${b.min}]<br />enctrs`;
+     } else {
+       cell.innerHTML = `[${b.min}-${b.max}]<br />enctrs`;
+     }
+     datacell = threshrow.insertCell(-1);
+     datacell.innerHTML = 0;
+   }
+   var insuffrow = tbl.insertRow(-1);
+   insuffrow.setAttribute("id","insuffrow");
+   insuffrow.setAttribute("style","font-style:italic");
+   cell = insuffrow.insertCell(-1);
+   cell.setAttribute("id","insuffcell");
+   cell.setAttribute("colspan",threshrow.cells.length);
+   cell.innerHTML = `Note: x person(s) did not catch ${thresh} shinies so their results are not counted above.`;
 }
 
 function updateBuckets(data) {
@@ -159,11 +199,44 @@ function updateCountBucket(worker) {
   for (let b of workerstats.buckets.count) {
     cells[childi++].innerHTML = b.workers.length;
   }
-
 }
 
 function updateThreshBucket(worker) {
+  if (worker.stats.succ>=workerstats.threshold) {
+    // find the right bucket to put the worker into if they have met threshold
+    let hit = false;
+    for (let b of workerstats.buckets.thresh) {
+      b.workers = b.workers.filter(w => worker.id!=w.id); // remove worker from existing bucket if already there
+      if (worker.stats.total>=b.min && worker.stats.total<=b.max) {
+        hit = true; // we found the bucket for this worker
+        b.workers.push(worker);
+        break;
+      }
+    }
 
+    // if the worker didn't fit into any of the predefined buckets, put them into the last bucket
+    if (!hit) {
+      workerstats.buckets.thresh[workerstats.buckets.thresh.length-1].workers.push(worker);
+    }
+
+    // update the counts in all the buckets
+    var threshrow = document.getElementById("bucketthreshrow");
+    var cells = threshrow.children;
+    var childi = 0;
+    for (let b of workerstats.buckets.thresh) {
+      cells[childi++].innerHTML = b.workers.length;
+    }
+  }
+
+  // finally, update row indiciating how many results aren't counting
+  let insuffcell = document.getElementById("insuffcell");
+  let insuff = 0;
+  for (let w of workers) {
+    if (w.stats.succ<workerstats.threshold){
+      insuff++;
+    }
+  }
+  insuffcell.innerHTML = `Note: ${insuff} person(s) did not catch ${workerstats.threshold} shinies so their results are not counted above.`;
 }
 
 function addRow(i,prob) {
