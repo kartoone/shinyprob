@@ -29,7 +29,7 @@ function runSimulation() {
     workers[i] = new Worker("randworker.js");
     workers[i].id = i;
     workers[i].stats = {}; // setup a new place to keep track of this workers stats
-    addRow(i);
+    addRow(i,prob);
     workers[i].addEventListener('message',function(e){
       if (e.data[0]==-1) {
         // worker just finished, check to see if this was the last workers
@@ -166,7 +166,7 @@ function updateThreshBucket(worker) {
 
 }
 
-function addRow(i) {
+function addRow(i,prob) {
   var tbl = document.getElementById('simtbl');
   var row = tbl.insertRow(-1);
   row.setAttribute('id','row'+i);
@@ -178,6 +178,11 @@ function addRow(i) {
   cell.setAttribute('id','succ'+i);
   cell = row.insertCell(-1);
   cell.setAttribute('id','prob'+i);
+  var probdisp = parseFloat(1/prob).toPrecision(15);
+  while (probdisp.charAt(probdisp.length-1)=='0') {
+    probdisp = probdisp.substring(0,probdisp.length-1);
+  }
+  cell.innerHTML = probdisp;
   cell = row.insertCell(-1);
   cell.setAttribute('id','cur'+i);
 }
@@ -197,8 +202,6 @@ function updateRow(data) {
   }
   var curcell = document.getElementById('cur'+i);
   curcell.innerHTML = data[3];
-  var probcell = document.getElementById('prob'+i);
-  probcell.innerHTML = data[4];
 }
 
 function updateStats(data) {

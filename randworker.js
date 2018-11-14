@@ -23,11 +23,11 @@ self.addEventListener('message',function(e) {
 });
 
 function nextsim(cur) {
+  total++;
   if (cur<prob) {
     succ++;
     successes.push([myid, succ, total, cur, prob]);
   }
-  total++;
   if (realtime) {
     self.postMessage([myid,succ,total,cur,prob]);
     setTimeout(function(){nextsimhelper(cur);},Math.round(Math.random()*delay));
