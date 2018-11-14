@@ -108,7 +108,7 @@
         </form>
       </div>
       <div class="w3-half" id="resultspanel">
-        <h2>Cumulative Results</h2>
+        <h2 style="margin-bottom:0">Cumulative Results</h2>
         <table class="w3-table-all" id="threshtbl">
           <tr>
             <td id="anacount" class="result"></td>
@@ -130,13 +130,18 @@
           </tr>
         </table>
 
-        <h2>Bucket Analysis</h2> (Grouping results into "buckets", e.g., how many people fell within each indicated range)
+        <h2 style="margin-bottom:0">Bucket Analysis</h2>
+        <p style="margin:0;padding:0">(Grouping results into "buckets", e.g., how many people fell within each indicated range)</p>
         <table class="w3-table-all" id="bucketthreshtbl">
+          <tr><td>Re-run simulation to see correct buckets for the specified number of shinies</td></tr>
         </table>
         <table class="w3-table-all" id="bucketcounttbl">
         </table>
 
-        <h2 style="display:inline">Simulations</h2> <input type="checkbox" id="realtimecheckbox" checked="checked" value="1" onchange="enableRealtime();" /> Display real-time updates (when enabled only 450 sims can be run simultaneously)
+        <h2 style="margin-bottom:0">Simulations</h2>
+        <form style="margin:0;padding:0">
+          <input type="checkbox" id="realtimecheckbox" checked="checked" value="1" onchange="enableRealtime();" /> Display real-time updates (when enabled only 450 sims can be run simultaneously)
+        </form>
         <table class="w3-table-all" id="simtbl">
           <thead>
             <tr><th>Person</th><th>Encounters</th><th>Shinies</th><th>Prob</th><th>Current</th><th>Winning probs (encounter #)</th></tr>

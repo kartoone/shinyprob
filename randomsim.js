@@ -86,7 +86,9 @@ function resetStats() {
 // for the thresh bucket, its based on threshold, runs, and odds
 function setupBuckets(thresh,runs,prob) {
   setupCountBucket(runs,prob);
-  setupThreshBucket(thresh,runs,prob);
+  if (thresh>0) {
+    setupThreshBucket(thresh,runs,prob);
+  }
 }
 
 function setupCountBucket(runs,prob) {
@@ -172,7 +174,9 @@ function setupThreshBucket(thresh,runs,prob) {
 function updateBuckets(data) {
   let worker = workers[data[0]];
   updateCountBucket(worker);
-  updateThreshBucket(worker);
+  if (workerstats.threshold>0) {
+    updateThreshBucket(worker); // only update encounter bucket if we are in mode 2 (blue mode)
+  }
 }
 
 function updateCountBucket(worker) {
