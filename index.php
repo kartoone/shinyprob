@@ -76,6 +76,7 @@
 
     <div class="w3-panel">
       <h3>Overview</h3>
+	  <b>Update: normal shiny probability is now set at 1:512 based on idea that Niantic might be using some binary-related server optimization. Most people agree 1:450 was never correct from the initial Silph Road research study. So the two likely candiates are 1:500 or 1:512. The probability of perfects can be known exactly assuming Niantic implementation is fair and accurate.</b>
       <p>
         This website uses Javascript to run repeated simulations to demonstrate how randomness
         works with regards to encountering shiny pokemon in pokemon go. It operates
@@ -97,14 +98,14 @@
           <label id="thresholdlabel" for="threshold">Number of shinies</label>
           <input class="w3-input" type="number" id="threshold" name="threshold" min="0" value="0" />
           <label for="numsims">Max # encounters</label>
-          <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="150" />
+          <input class="w3-input" type="number" id="numruns" name="numruns" min="0" value="500" />
           <label for="numsims">Shiny probability</label><br />
-          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="22.5" step="0.1" onchange="updateSelect(this.value)" />
+          1 / <input class="w3-input inline" type="number" id="simprob" name="simprob" min="1" value="512" step="0.1" onchange="updateSelect(this.value)" />
           <select name="guessedprobs" id="guessedprobs" onchange="document.getElementById('simprob').value=this.value;">
             <option value="100" id="customoption">Custom</custom>
-            <option value="22.5" selected="selected">Shiny: community day boosted probability</option>
+            <option value="22.5">Shiny: community day boosted probability</option>
             <option value="50">Shiny: special event (e.g., cubone, ponyta event)</option>
-            <option value="450">Shiny: normal non-boosted probability</option>
+            <option value="512" selected="selected">Shiny: normal non-boosted probability</option>
             <option value="216">Perfect: egg hatch or raid</option>
             <option value="1728">Perfect: weather boosted spawn</option>
             <option value="64">Perfect: lucky trade</option>
